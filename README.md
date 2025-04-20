@@ -1,26 +1,19 @@
-# 🎬 Movie Information App
+# 🎬 Finnkinon elokuva sovellus
 
-A responsive and stylish movie information web application that uses live data from the Finnkino REST API. Users can browse currently playing movies in various Finnish theatres, view showtimes, and search movies with custom input.
+ elokuvien tiedonhakusovellus, joka käyttää reaaliaikaisia tietoja Finnkino REST API:sta. Käyttäjät voivat selata eri Suomen teattereissa esitettävien elokuvien tietoja, katsoa näytösaikoja ja etsiä elokuvia mukautetulla hakukentällä.
 
 ## 🌐 Live Features
 
-- Select a **theatre** from a dropdown list
-- View **ongoing movies** at the selected theatre
+- Valitse teatteri pudotusvalikosta
+- Näe käynnissä olevat elokuvat valitussa teatterissa
 - See **movie posters**, **descriptions**, and **showtimes**
-- Clean and responsive **layout and styling**
-- **Custom search input** for filtering movie titles *(Bonus feature)*
+- Mukautettu hakukenttä elokuvan nimien suodattamiseen
 
 ## 📡 Data Source
 
-This app uses the **Finnkino REST API** for real-time movie and schedule information.
+ Tämä sovellus käyttää Finnkino REST API:ta reaaliaikaisen elokuvan ja aikataulujen tiedon hakemiseen.
 
-- Theatre list: `http://www.finnkino.fi/xml/TheatreAreas/`
-- Schedule: `http://www.finnkino.fi/xml/Schedule/?area=<TheatreID>`
-- API Docs: [Finnkino XML Feed](http://www.finnkino.fi/xml)
+- Elokuva lista: `http://www.finnkino.fi/xml/TheatreAreas/`
+- Aikataulut: `http://www.finnkino.fi/xml/Schedule/?area=<TheatreID>`
+- API: [Finnkino XML Feed](http://www.finnkino.fi/xml)
 
-## 🚀 How to Run
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/movie-info-app.git
-   cd movie-info-app
