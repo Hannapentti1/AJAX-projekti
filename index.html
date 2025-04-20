@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finnkino elokuvat</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #000;
+      color: #f1c40f; 
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #f1c40f;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    select, input {
+      padding: 10px;
+      font-size: 16px;
+      background-color: #222;
+      color: #fff;
+      border: 1px solid #f1c40f;
+      border-radius: 5px;
+    }
+
+    .movie-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .movie {
+      background-color: #333;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .movie img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    .movie h3 {
+      margin: 10px 0;
+      font-size: 18px;
+      color: #f1c40f;
+    }
+
+    .movie p {
+      margin: 5px 0;
+    }
+
+    .movie-detail {
+      background-color: #444;
+      color: #f1c40f;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 8px;
+    }
+
+    .movie-detail h2 {
+      font-size: 24px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎥 Finnkino elokuvat</h1>
+
+  <div class="controls">
+    <select id="theaterSelect">
+      <option value="">Valitse teatteri</option>
+    </select>
+    <input type="date" id="dateInput">
+    <input type="text" id="searchInput" placeholder="Etsi elokuvan nimellä...">
+  </div>
+
+  <div class="movie-container" id="movieContainer"></div>
+
+  <script>
+  
+    const theaterSelect = document.getElementById('theaterSelect');
+    const searchInput = document.getElementById('searchInput');
+    const movieContainer = document.getElementById('movieContainer');
+    const dateInput = document.getElementById('dateInput');
+    const apiKey = 'your-omdb-api-key';
+
+    let moviesData = [];
+
+    
+    async function fetchXML(url) {
+      const response = await fetch(url);
+      const text = await response.text();
+      return new window.DOMParser().parseFromString(text, "text/xml");
+    }
+
+    
+    async function loadTheaters() {
+      const xml = await fetchXML('http://www.finnkino.fi/xml/TheatreAreas');
+      const areas = xml.querySelectorAll('TheatreArea');
+      
+      
+      theaterSelect.innerHTML = '<option value="">Valitse teatteri</option>';
+      
+      areas.forEach(area => {
+        const id = area.querySelector('ID').textContent;
+        const name = area.querySelector('Name').textContent;
+        const option = document.createElement('option');
+        option.value = id;
+        option.textContent = name;
+        theaterSelect.appendChild(option);
+      });
+    }
+
+    
+    async function loadMovies(theaterId, date) {
+      if (!theaterId) return;
+
+      const url = `http://www.finnkino.fi/xml/Schedule/?area=${theaterId}&dt=${date}`;
+      const xml = await fetchXML(url);
+      const shows = xml.querySelectorAll('Show');
+      
+      moviesData = Array.from(shows).map(show => ({
+        title: show.querySelector('Title').textContent,
+        image: show.querySelector('EventLargeImagePortrait').textContent,
+        genres: show.querySelector('Genres')?.textContent || "Unknown",
+        theater: show.querySelector('Theatre').textContent,
+        startTime: new Date(show.querySelector('dttmShowStart').textContent).toLocaleString()
+      }));
+      
+      displayMovies(moviesData);
+    }
+
+    
+    function displayMovies(movies) {
+      const searchTerm = searchInput.value.toLowerCase();
+      const filteredMovies = movies.filter(movie => 
+        movie.title.toLowerCase().includes(searchTerm)
+      );
+
+      movieContainer.innerHTML = filteredMovies.length
+        ? filteredMovies.map(movie => `
+          <div class="movie">
+            <img src="${movie.image}" alt="${movie.title}">
+            <h3>${movie.title}</h3>
+            <p><strong>Genres:</strong> ${movie.genres}</p>
+            <p><strong>Theater:</strong> ${movie.theater}</p>
+            <p><strong>Showtime:</strong> ${movie.startTime}</p>
+          </div>
+        `).join('')
+        : '<p>No movies found.</p>';
+    }
+
+    
+    async function fetchMovieDetails(title) {
+      const url = `http://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=${apiKey}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      if (data.Response === 'True') {
+        console.log('Movie Details:', data);
+        
+        
+        
+      } else {
+        console.log('Error fetching movie data:', data.Error);
+      }
+    }
+
+    
+    function displayMovieDetails(data) {
+      const movieDetailDiv = document.createElement('div');
+      movieDetailDiv.className = 'movie-detail';
+      
+      movieDetailDiv.innerHTML = `
+        <h2>${data.Title}</h2>
+        <img src="${data.Poster}" alt="${data.Title}" />
+        <p><strong>Plot:</strong> ${data.Plot}</p>
+        <p><strong>Rating:</strong> ${data.imdbRating}</p>
+        <p><strong>Released:</strong> ${data.Released}</p>
+      `;
+      
+      movieContainer.appendChild(movieDetailDiv);
+    }
+
+    
+    theaterSelect.addEventListener('change', () => {
+      const theaterId = theaterSelect.value;
+      const selectedDate = dateInput.value || new Date().toISOString().split('T')[0]; 
+      loadMovies(theaterId, selectedDate);
+    });
+
+    dateInput.addEventListener('change', () => {
+      const theaterId = theaterSelect.value;
+      const selectedDate = dateInput.value;
+      if (theaterId) {
+        loadMovies(theaterId, selectedDate);
+      }
+    });
+
+    searchInput.addEventListener('input', () => {
+      displayMovies(moviesData); 
+    });
+
+    
+    loadTheaters();
+
+    
+    dateInput.valueAsDate = new Date();
+
+    
+    fetchMovieDetails('Inception'); 
+  </script>
+</body>
+</html>
