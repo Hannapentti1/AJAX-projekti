@@ -2,14 +2,14 @@
 
  elokuvien tiedonhakusovellus, joka käyttää reaaliaikaisia tietoja Finnkino REST API:sta. Käyttäjät voivat selata eri Suomen teattereissa esitettävien elokuvien tietoja, katsoa näytösaikoja ja etsiä elokuvia mukautetulla hakukentällä.
 
-## 🌐 Live Features
+## 🌐 Live ominaisuudet
 
 - Valitse teatteri pudotusvalikosta
 - Näe käynnissä olevat elokuvat valitussa teatterissa
 - See **movie posters**, **descriptions**, and **showtimes**
 - Mukautettu hakukenttä elokuvan nimien suodattamiseen
 
-## 📡 Data Source
+## 📡 Tietolähteet
 
  Tämä sovellus käyttää Finnkino REST API:ta reaaliaikaisen elokuvan ja aikataulujen tiedon hakemiseen.
 
