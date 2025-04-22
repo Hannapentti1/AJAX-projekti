@@ -1,6 +1,6 @@
 # 🎬 Finnkinon elokuva sovellus
 
- elokuvien tiedonhakusovellus, joka käyttää reaaliaikaisia tietoja Finnkino REST API:sta. Käyttäjät voivat selata eri Suomen teattereissa esitettävien elokuvien tietoja, katsoa näytösaikoja ja etsiä elokuvia mukautetulla hakukentällä.
+ Elokuvien tiedonhakusovellus, joka käyttää reaaliaikaisia tietoja Finnkino REST API:sta. Käyttäjät voivat selata eri Suomen teattereissa esitettävien elokuvien tietoja, katsoa näytösaikoja ja etsiä elokuvia mukautetulla hakukentällä.
 
 ## 🌐 Live ominaisuudet
 
