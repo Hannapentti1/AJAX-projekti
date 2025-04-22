@@ -4,7 +4,8 @@ const movieContainer = document.getElementById('movieContainer');
 const dateInput = document.getElementById('dateInput');
 const apiKey = 'a025fbba'; 
 
-const proxyUrl = 'https://cors-anywhere.herokuapp.com/'; // CORS-välityspalvelin
+// Käytetään allorigins-win proxyä CORS ongelman välttämiseksi
+const proxyUrl = 'https://api.allorigins.win/raw?url='; // Vaihda CORS-proxy
 
 let moviesData = []; 
 
@@ -115,3 +116,4 @@ document.addEventListener("DOMContentLoaded", () => {
   loadTheaters();
   dateInput.valueAsDate = new Date();
 });
+
