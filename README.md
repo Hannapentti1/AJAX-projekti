@@ -5,8 +5,7 @@
 ## 🌐 Live ominaisuudet
 
 - Valitse teatteri pudotusvalikosta
-- Näe käynnissä olevat elokuvat valitussa teatterissa
-- See **movie posters**, **descriptions**, and **showtimes**
+- Näe käynnissä olevat elokuvat sekä näytösajat valitussa teatterissa
 - Mukautettu hakukenttä elokuvan nimien suodattamiseen
 
 ## 📡 Tietolähteet
