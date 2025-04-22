@@ -2,25 +2,24 @@ const theaterSelect = document.getElementById('theaterSelect');
 const searchInput = document.getElementById('searchInput');
 const movieContainer = document.getElementById('movieContainer');
 const dateInput = document.getElementById('dateInput');
-const apiKey = 'your-omdb-api-key'; // Replace with your actual OMDb API key.
-const proxyUrl = 'https://cors-anywhere.herokuapp.com/'; // Use a proxy for CORS issues.
+const apiKey = 'your-omdb-api-key'; 
 
-let moviesData = [];
+let moviesData = []; 
 
-// Fetch XML data
 async function fetchXML(url) {
-  const response = await fetch(proxyUrl + url); // Use proxy for CORS.
+  const response = await fetch(url);
   const text = await response.text();
   return new window.DOMParser().parseFromString(text, "text/xml");
 }
 
-// Load theaters from Finnkino API
+
 async function loadTheaters() {
   const xml = await fetchXML('http://www.finnkino.fi/xml/TheatreAreas');
   const areas = xml.querySelectorAll('TheatreArea');
-
+  
+  
   theaterSelect.innerHTML = '<option value="">Valitse teatteri</option>';
-
+  
   areas.forEach(area => {
     const id = area.querySelector('ID').textContent;
     const name = area.querySelector('Name').textContent;
@@ -31,14 +30,14 @@ async function loadTheaters() {
   });
 }
 
-// Load movies for a specific theater and date
+
 async function loadMovies(theaterId, date) {
   if (!theaterId) return;
 
   const url = `http://www.finnkino.fi/xml/Schedule/?area=${theaterId}&dt=${date}`;
   const xml = await fetchXML(url);
   const shows = xml.querySelectorAll('Show');
-
+  
   moviesData = Array.from(shows).map(show => ({
     title: show.querySelector('Title').textContent,
     image: show.querySelector('EventLargeImagePortrait').textContent,
@@ -46,14 +45,14 @@ async function loadMovies(theaterId, date) {
     theater: show.querySelector('Theatre').textContent,
     startTime: new Date(show.querySelector('dttmShowStart').textContent).toLocaleString()
   }));
-
+  
   displayMovies(moviesData);
 }
 
-// Display movies in the container
+
 function displayMovies(movies) {
   const searchTerm = searchInput.value.toLowerCase();
-  const filteredMovies = movies.filter(movie =>
+  const filteredMovies = movies.filter(movie => 
     movie.title.toLowerCase().includes(searchTerm)
   );
 
@@ -70,23 +69,40 @@ function displayMovies(movies) {
     : '<p>No movies found.</p>';
 }
 
-// Fetch movie details from OMDb API
+
 async function fetchMovieDetails(title) {
-  const url = `https://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=${apiKey}`;
+  const url = `http://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=${apiKey}`;
   const response = await fetch(url);
   const data = await response.json();
-
+  
   if (data.Response === 'True') {
     console.log('Movie Details:', data);
+  
   } else {
-    console.error('Error fetching movie data:', data.Error);
+    console.log('Error fetching movie data:', data.Error);
   }
 }
 
-// Event listeners
+
+function displayMovieDetails(data) {
+  const movieDetailDiv = document.createElement('div');
+  movieDetailDiv.className = 'movie-detail';
+  
+  movieDetailDiv.innerHTML = `
+    <h2>${data.Title}</h2>
+    <img src="${data.Poster}" alt="${data.Title}" />
+    <p><strong>Plot:</strong> ${data.Plot}</p>
+    <p><strong>Rating:</strong> ${data.imdbRating}</p>
+    <p><strong>Released:</strong> ${data.Released}</p>
+  `;
+  
+  movieContainer.appendChild(movieDetailDiv);
+}
+
+
 theaterSelect.addEventListener('change', () => {
   const theaterId = theaterSelect.value;
-  const selectedDate = dateInput.value || new Date().toISOString().split('T')[0];
+  const selectedDate = dateInput.value || new Date().toISOString().split('T')[0]; 
   loadMovies(theaterId, selectedDate);
 });
 
@@ -99,10 +115,15 @@ dateInput.addEventListener('change', () => {
 });
 
 searchInput.addEventListener('input', () => {
-  displayMovies(moviesData);
+  displayMovies(moviesData); 
 });
 
-// Initialize
+
 loadTheaters();
+
+
 dateInput.valueAsDate = new Date();
+
+
+fetchMovieDetails('Inception'); 
 
