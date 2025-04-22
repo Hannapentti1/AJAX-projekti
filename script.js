@@ -4,6 +4,8 @@ const movieContainer = document.getElementById('movieContainer');
 const dateInput = document.getElementById('dateInput');
 const apiKey = 'a025fbba'; 
 
+const proxyUrl = 'https://cors-anywhere.herokuapp.com/'; // CORS-välityspalvelin
+
 let moviesData = []; 
 
 async function fetchXML(url) {
@@ -25,7 +27,8 @@ async function fetchXML(url) {
 // Teattereiden lataaminen
 async function loadTheaters() {
   try {
-    const xml = await fetchXML('http://www.finnkino.fi/xml/TheatreAreas');
+    const url = `${proxyUrl}http://www.finnkino.fi/xml/TheatreAreas`;
+    const xml = await fetchXML(url);
     if (!xml) {
       console.error("Teatterialueiden lataaminen epäonnistui.");
       return;
@@ -54,7 +57,7 @@ async function loadTheaters() {
 async function loadMovies(theaterId, date) {
   if (!theaterId) return;
 
-  const url = `http://www.finnkino.fi/xml/Schedule/?area=${theaterId}&dt=${date}`;
+  const url = `${proxyUrl}http://www.finnkino.fi/xml/Schedule/?area=${theaterId}&dt=${date}`;
   const xml = await fetchXML(url);
   const shows = xml.querySelectorAll('Show');
 
@@ -87,6 +90,8 @@ function displayMovies(movies) {
     `).join('')
     : '<p>No movies found.</p>';
 }
+
+// Event handlers
 theaterSelect.addEventListener('change', () => {
   const theaterId = theaterSelect.value;
   const selectedDate = dateInput.value || new Date().toISOString().split('T')[0]; 
@@ -100,13 +105,13 @@ dateInput.addEventListener('change', () => {
     loadMovies(theaterId, selectedDate);
   }
 });
+
 searchInput.addEventListener('input', () => {
   displayMovies(moviesData);
 });
 
+// Initial setup
 document.addEventListener("DOMContentLoaded", () => {
   loadTheaters();
   dateInput.valueAsDate = new Date();
 });
-
-
